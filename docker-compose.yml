@@ -1,0 +1,13 @@
+version: '3.7'
+
+services:
+  web:
+    container_name: web_nginx
+    build:
+      context: ./.docker
+      dockerfile: nginx.dockerfile
+    ports:
+      - "80:8080"
+    restart: always
+    volumes:
+      - ./src/welcome:/var/www/html
