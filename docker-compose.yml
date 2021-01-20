@@ -10,4 +10,4 @@ services:
       - "80:8080"
     restart: always
     volumes:
-      - ./src/welcome:/var/www/html
+      - ./src/:/var/www/html
