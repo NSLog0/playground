@@ -37062,13 +37062,12 @@ require("./App.scss");
 
 function init() {
   var scene = new THREE.Scene();
-  var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.01, 10);
+  var camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1500);
   var renderer = new THREE.WebGLRenderer({
     antialias: true
   });
   camera.position.z = 1;
   renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setClearColor(0xffffff);
   renderer.render(scene, camera);
   return {
     camera: camera,
@@ -37077,32 +37076,22 @@ function init() {
   };
 }
 
-function createLight() {
-  return new THREE.AmbientLight(0xffffff, 0.5);
-}
-
-function createPointLight() {
-  new THREE.PointLight(0xff0040, 2.5, 100, decay);
-  light1.add(new THREE.Mesh(sphere, new THREE.MeshBasicMaterial({
-    color: c1
+function createPointLight(color) {
+  var sphere = new THREE.SphereBufferGeometry(0.03, 20, 20);
+  var light = new THREE.PointLight(color, Math.random(), 25, 0.4);
+  light.add(new THREE.Mesh(sphere, new THREE.MeshBasicMaterial({
+    color: color
   })));
-  scene.add(light1);
+  return light;
 }
 
 function createMesh() {
-  var geometry = new THREE.BoxGeometry(0.2, 0.2, 0.2);
-  var material = new THREE.MeshNormalMaterial();
+  var geometry = new THREE.BoxBufferGeometry(0.2, 0.2, 0.2);
+  var material = new THREE.MeshPhongMaterial({
+    color: 0xc8d6e5
+  });
   var mesh = new THREE.Mesh(geometry, material);
   return mesh;
-}
-
-function animate(scene, camera, renderer, mesh) {
-  requestAnimationFrame(function () {
-    return animate(scene, camera, renderer, mesh);
-  });
-  mesh.rotation.x += 0.01;
-  mesh.rotation.y += 0.01;
-  renderer.render(scene, camera);
 }
 
 var _init = init(),
@@ -37111,11 +37100,36 @@ var _init = init(),
     renderer = _init.renderer;
 
 var mesh = createMesh();
-var light = createLight();
+var pLightColors = [0xff4757, 0xff9f43, 0x5f27cd, 0x7bed9f];
+var pLights = pLightColors.map(function (color) {
+  return createPointLight(color);
+});
+
+function animate() {
+  requestAnimationFrame(animate);
+  mesh.rotation.x += 0.02;
+  mesh.rotation.y += 0.02;
+  var time = Date.now() * 0.002;
+  var d = 3;
+  pLights[0].position.x = Math.sin(time * 0.7) * d;
+  pLights[0].position.z = Math.cos(time * 0.3) * d;
+  pLights[1].position.y = Math.tan(time * 0.6) * d;
+  pLights[1].position.x = Math.sin(time * 0.3) * d;
+  pLights[1].position.z = Math.sin(time * 0.7) * d;
+  pLights[2].position.x = Math.sin(time * 0.4) * d;
+  pLights[2].position.z = Math.sin(time * 0.2) * d;
+  pLights[2].position.y = Math.tan(time * 0.3) * d;
+  pLights[3].position.x = Math.sin(time * 0.4) * d;
+  pLights[3].position.z = Math.sin(time * 0.3) * d;
+  renderer.render(scene, camera);
+}
+
+pLights.map(function (x) {
+  scene.add(x);
+});
 scene.add(mesh);
-scene.add(light);
 (_a = document.getElementById('root')) === null || _a === void 0 ? void 0 : _a.appendChild(renderer.domElement);
-animate(scene, camera, renderer, mesh);
+animate();
 },{"three":"../node_modules/three/build/three.module.js","./App.scss":"App.scss"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';

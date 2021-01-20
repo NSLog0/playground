@@ -4,50 +4,65 @@ import './App.scss'
 
 function init() {
   const scene = new THREE.Scene()
-  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.01, 10)
+  const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1500)
   const renderer = new THREE.WebGLRenderer({ antialias: true });
 
   camera.position.z = 1
   renderer.setSize(window.innerWidth, window.innerHeight)
-  renderer.setClearColor(0xffffff)
   renderer.render(scene, camera)
 
   return { camera , scene, renderer }
 }
 
+function createPointLight(color: any) {
+  const sphere = new THREE.SphereBufferGeometry(0.03, 20, 20);
+  const light = new THREE.PointLight(color, Math.random(), 25, 0.4);
 
-function createLight() {
-  return new THREE.AmbientLight(0xffffff, 0.5)
-}
+  light.add( new THREE.Mesh( sphere, new THREE.MeshBasicMaterial( { color } ) ) );
 
-function createPointLight() {
-  new THREE.PointLight( 0xff0040, 2.5, 100, decay );
-				light1.add( new THREE.Mesh( sphere, new THREE.MeshBasicMaterial( { color: c1 } ) ) );
-				scene.add( light1 );
+  return light
 }
 
 function createMesh() {
-  const geometry = new THREE.BoxGeometry( 0.2, 0.2, 0.2 );
-	const material = new THREE.MeshNormalMaterial();
-	const mesh = new THREE.Mesh( geometry, material );
+  const geometry = new THREE.BoxBufferGeometry( 0.2, 0.2, 0.2 );
+  const material = new THREE.MeshPhongMaterial( { color: 0xc8d6e5 } );
+  const mesh = new THREE.Mesh( geometry, material );
 
   return mesh
 }
 
-function animate(scene: THREE.Scene, camera: THREE.Camera, renderer: THREE.WebGLRenderer, mesh: THREE.Mesh) {
-  requestAnimationFrame(() => animate(scene, camera, renderer, mesh))
-  mesh.rotation.x += 0.01
-  mesh.rotation.y += 0.01
+const { camera , scene, renderer }= init()
+const mesh = createMesh()
+const pLightColors = [0xff4757, 0xff9f43, 0x5f27cd, 0x7bed9f]
+const pLights = pLightColors.map((color) => createPointLight(color))
+
+function animate() {
+  requestAnimationFrame(animate)
+
+  mesh.rotation.x += 0.02
+  mesh.rotation.y += 0.02
+
+  const time = Date.now() * 0.002;
+  const d = 3;
+
+  pLights[0].position.x = Math.sin(time * 0.7) * d
+  pLights[0].position.z = Math.cos(time * 0.3) * d
+
+  pLights[1].position.y = Math.tan(time * 0.6) * d
+  pLights[1].position.x = Math.sin(time * 0.3) * d
+  pLights[1].position.z = Math.sin(time * 0.7) * d
+
+  pLights[2].position.x = Math.sin( time * 0.4 ) * d
+  pLights[2].position.z = Math.sin( time * 0.2 ) * d
+  pLights[2].position.y = Math.tan( time * 0.3 ) * d
+
+  pLights[3].position.x = Math.sin( time * 0.4 ) * d
+  pLights[3].position.z = Math.sin( time * 0.3 ) * d
+
   renderer.render(scene, camera)
 }
 
-const { camera , scene, renderer }= init()
-const mesh = createMesh()
-const light = createLight()
-
+pLights.map(x => { scene.add(x) })
 scene.add(mesh);
-scene.add(light)
 document.getElementById('root')?.appendChild(renderer.domElement)
-animate(scene, camera, renderer, mesh)
-
-
+animate()
