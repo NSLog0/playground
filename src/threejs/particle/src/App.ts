@@ -35,7 +35,7 @@ function createSpotLight() {
 
 function createMesh() {
   const geometry = new THREE.BoxBufferGeometry(1.7, 1.7, 1.7);
-  const material = newTHREE.MeshPhongMaterial({ color: 0xffffff });
+  const material = new THREE.MeshPhongMaterial({ color: 0xffffff });
   const mesh = new THREE.Mesh( geometry, material );
 
   return mesh
