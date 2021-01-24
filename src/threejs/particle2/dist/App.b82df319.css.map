@@ -1,0 +1,1 @@
+{"version":3,"sources":["App.scss"],"names":[],"mappings":"AAAA,KAAO,kBAAA,CAAqB,oBAC5B,OAAS,UAAA,CAAa","file":"App.b82df319.css","sourceRoot":"../src","sourcesContent":["body { margin: 0!important; padding: 0!important}\ncanvas { width: 100%; height: 100% }\n"]}
