@@ -37770,10 +37770,136 @@ var MapControls = function (object, domElement) {
 exports.MapControls = MapControls;
 MapControls.prototype = Object.create(_threeModule.EventDispatcher.prototype);
 MapControls.prototype.constructor = MapControls;
-},{"../../../build/three.module.js":"../node_modules/three/build/three.module.js"}],"sharders/fragment.glsl":[function(require,module,exports) {
-module.exports = "#define GLSLIFY 1\nuniform float time;\nvarying vec2 vUv;\nvarying vec3 vPosition;\nuniform sampler2D texture1;\n\nvoid main()\n{\n  vec4 pattern = texture2D(texture1, vUv);\n  gl_FragColor = vec4(vUv, 0, 1);\n  gl_FragColor = pattern;\n}\n";
+},{"../../../build/three.module.js":"../node_modules/three/build/three.module.js"}],"../node_modules/three/examples/jsm/libs/stats.module.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var Stats = function () {
+  var mode = 0;
+  var container = document.createElement('div');
+  container.style.cssText = 'position:fixed;top:0;left:0;cursor:pointer;opacity:0.9;z-index:10000';
+  container.addEventListener('click', function (event) {
+    event.preventDefault();
+    showPanel(++mode % container.children.length);
+  }, false); //
+
+  function addPanel(panel) {
+    container.appendChild(panel.dom);
+    return panel;
+  }
+
+  function showPanel(id) {
+    for (var i = 0; i < container.children.length; i++) {
+      container.children[i].style.display = i === id ? 'block' : 'none';
+    }
+
+    mode = id;
+  } //
+
+
+  var beginTime = (performance || Date).now(),
+      prevTime = beginTime,
+      frames = 0;
+  var fpsPanel = addPanel(new Stats.Panel('FPS', '#0ff', '#002'));
+  var msPanel = addPanel(new Stats.Panel('MS', '#0f0', '#020'));
+
+  if (self.performance && self.performance.memory) {
+    var memPanel = addPanel(new Stats.Panel('MB', '#f08', '#201'));
+  }
+
+  showPanel(0);
+  return {
+    REVISION: 16,
+    dom: container,
+    addPanel: addPanel,
+    showPanel: showPanel,
+    begin: function () {
+      beginTime = (performance || Date).now();
+    },
+    end: function () {
+      frames++;
+      var time = (performance || Date).now();
+      msPanel.update(time - beginTime, 200);
+
+      if (time >= prevTime + 1000) {
+        fpsPanel.update(frames * 1000 / (time - prevTime), 100);
+        prevTime = time;
+        frames = 0;
+
+        if (memPanel) {
+          var memory = performance.memory;
+          memPanel.update(memory.usedJSHeapSize / 1048576, memory.jsHeapSizeLimit / 1048576);
+        }
+      }
+
+      return time;
+    },
+    update: function () {
+      beginTime = this.end();
+    },
+    // Backwards Compatibility
+    domElement: container,
+    setMode: showPanel
+  };
+};
+
+Stats.Panel = function (name, fg, bg) {
+  var min = Infinity,
+      max = 0,
+      round = Math.round;
+  var PR = round(window.devicePixelRatio || 1);
+  var WIDTH = 80 * PR,
+      HEIGHT = 48 * PR,
+      TEXT_X = 3 * PR,
+      TEXT_Y = 2 * PR,
+      GRAPH_X = 3 * PR,
+      GRAPH_Y = 15 * PR,
+      GRAPH_WIDTH = 74 * PR,
+      GRAPH_HEIGHT = 30 * PR;
+  var canvas = document.createElement('canvas');
+  canvas.width = WIDTH;
+  canvas.height = HEIGHT;
+  canvas.style.cssText = 'width:80px;height:48px';
+  var context = canvas.getContext('2d');
+  context.font = 'bold ' + 9 * PR + 'px Helvetica,Arial,sans-serif';
+  context.textBaseline = 'top';
+  context.fillStyle = bg;
+  context.fillRect(0, 0, WIDTH, HEIGHT);
+  context.fillStyle = fg;
+  context.fillText(name, TEXT_X, TEXT_Y);
+  context.fillRect(GRAPH_X, GRAPH_Y, GRAPH_WIDTH, GRAPH_HEIGHT);
+  context.fillStyle = bg;
+  context.globalAlpha = 0.9;
+  context.fillRect(GRAPH_X, GRAPH_Y, GRAPH_WIDTH, GRAPH_HEIGHT);
+  return {
+    dom: canvas,
+    update: function (value, maxValue) {
+      min = Math.min(min, value);
+      max = Math.max(max, value);
+      context.fillStyle = bg;
+      context.globalAlpha = 1;
+      context.fillRect(0, 0, WIDTH, GRAPH_Y);
+      context.fillStyle = fg;
+      context.fillText(round(value) + ' ' + name + ' (' + round(min) + '-' + round(max) + ')', TEXT_X, TEXT_Y);
+      context.drawImage(canvas, GRAPH_X + PR, GRAPH_Y, GRAPH_WIDTH - PR, GRAPH_HEIGHT, GRAPH_X, GRAPH_Y, GRAPH_WIDTH - PR, GRAPH_HEIGHT);
+      context.fillRect(GRAPH_X + GRAPH_WIDTH - PR, GRAPH_Y, PR, GRAPH_HEIGHT);
+      context.fillStyle = bg;
+      context.globalAlpha = 0.9;
+      context.fillRect(GRAPH_X + GRAPH_WIDTH - PR, GRAPH_Y, PR, round((1 - value / maxValue) * GRAPH_HEIGHT));
+    }
+  };
+};
+
+var _default = Stats;
+exports.default = _default;
+},{}],"sharders/fragment.glsl":[function(require,module,exports) {
+module.exports = "#define GLSLIFY 1\nuniform sampler2D texture1;\nvarying vec3 vColor;\nvarying vec2 vUv;\n\nvoid main() {\n  gl_FragColor = texture2D(texture1, vUv);\n}\n";
 },{}],"sharders/vertex.glsl":[function(require,module,exports) {
-module.exports = "#define GLSLIFY 1\nuniform float time;\nvarying vec2 vUv;\nvarying vec3 vPosition;\nuniform sampler2D pattern;\n\nvoid main() {\n  vUv = uv;\n  vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);\n  gl_PointSize = 3.0;\n  gl_Position = projectionMatrix * mvPosition;\n}\n";
+module.exports = "#define GLSLIFY 1\nvarying vec2 vUv;\n\nvoid main() {\n  vUv = uv;\n\n  vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);\n\n  gl_PointSize = 2.0 * ( 300.0 / -mvPosition.z );\n  gl_Position = projectionMatrix * mvPosition;\n}\n";
 },{}],"../node_modules/parcel-bundler/src/builtins/bundle-url.js":[function(require,module,exports) {
 var bundleURL = null;
 
@@ -37901,6 +38027,8 @@ var THREE = __importStar(require("three"));
 
 var OrbitControls_1 = require("three/examples/jsm/controls/OrbitControls");
 
+var stats_module_js_1 = __importDefault(require("three/examples/jsm/libs/stats.module.js"));
+
 var fragment_glsl_1 = __importDefault(require("./sharders/fragment.glsl"));
 
 var vertex_glsl_1 = __importDefault(require("./sharders/vertex.glsl"));
@@ -37911,27 +38039,27 @@ var star_wars_jpeg_1 = __importDefault(require("./images/star_wars.jpeg"));
 
 function init() {
   var scene = new THREE.Scene();
-  var camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 5000);
+  var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 2000);
   var renderer = new THREE.WebGLRenderer({
     antialias: true
   });
   new OrbitControls_1.OrbitControls(camera, renderer.domElement);
-  camera.position.z = 500;
+  var stats = new stats_module_js_1.default();
+  document.body.appendChild(stats.dom);
+  camera.position.z = 300;
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.render(scene, camera);
   return {
     camera: camera,
     scene: scene,
-    renderer: renderer
+    renderer: renderer,
+    stats: stats
   };
 }
 
 function createParticle() {
   var material = new THREE.ShaderMaterial({
-    extensions: {
-      derivatives: true
-    },
     uniforms: {
       time: {
         value: 0
@@ -37941,32 +38069,38 @@ function createParticle() {
       },
       texture1: {
         value: new THREE.TextureLoader().load(star_wars_jpeg_1.default)
-      }
+      },
+      depthTest: false,
+      transparent: true,
+      vertexColors: true
     },
     side: THREE.DoubleSide,
     fragmentShader: fragment_glsl_1.default,
     vertexShader: vertex_glsl_1.default
   });
-  var geometry = new THREE.PlaneBufferGeometry(500 * .5, 889 * .5, 500, 889);
-  return new THREE.Points(geometry, material);
+  var geometry = new THREE.PlaneBufferGeometry(400 * 0.56, 711 * 0.56, 400, 711);
+  var points = new THREE.Points(geometry, material);
+  return points;
 }
 
 var _init = init(),
     camera = _init.camera,
     scene = _init.scene,
-    renderer = _init.renderer;
+    renderer = _init.renderer,
+    stats = _init.stats;
 
 var particle = createParticle();
 
 function animate() {
   requestAnimationFrame(animate);
+  stats.update();
   renderer.render(scene, camera);
 }
 
 scene.add(particle);
 (_a = document.getElementById('root')) === null || _a === void 0 ? void 0 : _a.appendChild(renderer.domElement);
 animate();
-},{"three":"../node_modules/three/build/three.module.js","three/examples/jsm/controls/OrbitControls":"../node_modules/three/examples/jsm/controls/OrbitControls.js","./sharders/fragment.glsl":"sharders/fragment.glsl","./sharders/vertex.glsl":"sharders/vertex.glsl","./App.scss":"App.scss","./images/star_wars.jpeg":"images/star_wars.jpeg"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"three":"../node_modules/three/build/three.module.js","three/examples/jsm/controls/OrbitControls":"../node_modules/three/examples/jsm/controls/OrbitControls.js","three/examples/jsm/libs/stats.module.js":"../node_modules/three/examples/jsm/libs/stats.module.js","./sharders/fragment.glsl":"sharders/fragment.glsl","./sharders/vertex.glsl":"sharders/vertex.glsl","./App.scss":"App.scss","./images/star_wars.jpeg":"images/star_wars.jpeg"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -37994,7 +38128,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50159" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54198" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

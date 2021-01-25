@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import Stats from 'three/examples/jsm/libs/stats.module.js'
 
 import fragment from './sharders/fragment.glsl'
 import vertex from './sharders/vertex.glsl'
@@ -10,45 +11,49 @@ import patten from './images/star_wars.jpeg'
 
 function init() {
   const scene = new THREE.Scene()
-  const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 5000)
+  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 2000)
   const renderer = new THREE.WebGLRenderer({ antialias: true });
 
   new OrbitControls(camera, renderer.domElement)
 
-  camera.position.z = 500
+  const stats = new Stats();
+
+  document.body.appendChild( stats.dom );
+
+  camera.position.z = 300
   renderer.setSize(window.innerWidth, window.innerHeight)
   renderer.setPixelRatio(window.devicePixelRatio)
   renderer.render(scene, camera)
 
-  return { camera , scene, renderer }
+  return { camera , scene, renderer, stats }
 }
 
 function createParticle() {
-
   const material = new THREE.ShaderMaterial({
-    extensions: {
-      derivatives: true,
-    },
     uniforms: {
       time: {  value: 0 },
-      resolution: { value: new THREE.Vector4() }
+      resolution: { value: new THREE.Vector4() },
       texture1: { value: new THREE.TextureLoader().load(patten)},
+      depthTest: false,
+      transparent: true,
+      vertexColors: true
     },
     side: THREE.DoubleSide,
     fragmentShader: fragment,
     vertexShader: vertex
   })
-  const geometry = new THREE.PlaneBufferGeometry(500*.5, 889*.5, 500, 889)
+  const geometry =new THREE.PlaneBufferGeometry(400 * 0.56, 711 * 0.56, 400, 711);
+  const points = new THREE.Points(geometry, material)
 
-  return new THREE.Points(geometry, material)
+  return points
 }
 
-const { camera , scene, renderer }= init()
+const { camera , scene, renderer, stats }= init()
 const particle = createParticle()
 
 function animate() {
   requestAnimationFrame(animate)
-
+  stats.update()
   renderer.render(scene, camera)
 }
 
