@@ -34,9 +34,6 @@ function createParticle() {
       time: {  value: 0 },
       resolution: { value: new THREE.Vector4() },
       texture1: { value: new THREE.TextureLoader().load(patten)},
-      depthTest: false,
-      transparent: true,
-      vertexColors: true
     },
     side: THREE.DoubleSide,
     fragmentShader: fragment,

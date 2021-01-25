@@ -38069,10 +38069,7 @@ function createParticle() {
       },
       texture1: {
         value: new THREE.TextureLoader().load(star_wars_jpeg_1.default)
-      },
-      depthTest: false,
-      transparent: true,
-      vertexColors: true
+      }
     },
     side: THREE.DoubleSide,
     fragmentShader: fragment_glsl_1.default,
@@ -38128,7 +38125,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54198" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52935" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
