@@ -37897,7 +37897,7 @@ Stats.Panel = function (name, fg, bg) {
 var _default = Stats;
 exports.default = _default;
 },{}],"sharders/fragment.glsl":[function(require,module,exports) {
-module.exports = "#define GLSLIFY 1\nuniform sampler2D texture1;\nvarying vec3 vColor;\nvarying vec2 vUv;\n\nvoid main() {\n  gl_FragColor = texture2D(texture1, vUv);\n}\n";
+module.exports = "#define GLSLIFY 1\nuniform sampler2D utexture;\nvarying vec3 vColor;\nvarying vec2 vUv;\n\nvoid main() {\n  gl_FragColor = texture2D(utexture, vUv);\n}\n";
 },{}],"sharders/vertex.glsl":[function(require,module,exports) {
 module.exports = "#define GLSLIFY 1\nvarying vec2 vUv;\n\nvoid main() {\n  vUv = uv;\n\n  vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);\n\n  gl_PointSize = 2.0 * ( 300.0 / -mvPosition.z );\n  gl_Position = projectionMatrix * mvPosition;\n}\n";
 },{}],"../node_modules/parcel-bundler/src/builtins/bundle-url.js":[function(require,module,exports) {
@@ -38067,7 +38067,7 @@ function createParticle() {
       resolution: {
         value: new THREE.Vector4()
       },
-      texture1: {
+      utexture: {
         value: new THREE.TextureLoader().load(star_wars_jpeg_1.default)
       }
     },

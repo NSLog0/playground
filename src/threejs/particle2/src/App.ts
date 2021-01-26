@@ -33,7 +33,7 @@ function createParticle() {
     uniforms: {
       time: {  value: 0 },
       resolution: { value: new THREE.Vector4() },
-      texture1: { value: new THREE.TextureLoader().load(patten)},
+      utexture: { value: new THREE.TextureLoader().load(patten)},
     },
     side: THREE.DoubleSide,
     fragmentShader: fragment,
