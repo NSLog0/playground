@@ -1,0 +1,1 @@
+{"version":3,"sources":["App.scss"],"names":[],"mappings":"AAAA;EAAO;EAAqB;;;AAC5B;EAAS;EAAa","file":"App.7a936cda.css","sourceRoot":"../src","sourcesContent":["body { margin: 0!important; padding: 0!important}\ncanvas { width: 100%; height: 100% }\n"]}
