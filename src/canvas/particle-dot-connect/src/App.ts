@@ -37,16 +37,15 @@ window.addEventListener("mousemove", (e) => {
   mouse.x = e.x
   mouse.y = e.y
 
-  // handlePointer()
+  handlePointer()
 });
 
 window.addEventListener("mouseout", () => {
   mouse.x = undefined
   mouse.y = undefined
 
-  // handlePointer()
+  handlePointer()
 });
-
 
 const particleOption: IGenerateOption = {
   mouse,
