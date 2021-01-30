@@ -12,14 +12,15 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
     "noUncheckedIndexedAccess": true,
+    "noFallthroughCasesInSwitch": true,
     "moduleResolution": "node",
+    "strictNullChecks": false,
     "baseUrl": "./src",
     "paths": {
-      "~/*": ["./*"]
+      "*": ["*", "src/@types/global.d.ts"]
     },
-    "typeRoots": ["node_modules/@types", "src/@types/global.d.ts"],
+    "typeRoots": ["node_modules/@types"],
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true

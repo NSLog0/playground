@@ -12,9 +12,11 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
+    "noUncheckedIndexedAccess": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedIndexedAccess": true,
     "moduleResolution": "node",
+    "strictNullChecks": false,
     "baseUrl": "./src",
     "paths": {
       "*": ["*", "./src/@types/glsl.d.ts", "src/@types/global.d.ts", "src/@types/images.d.ts"]

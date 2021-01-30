@@ -37897,9 +37897,9 @@ Stats.Panel = function (name, fg, bg) {
 var _default = Stats;
 exports.default = _default;
 },{}],"sharders/fragment.glsl":[function(require,module,exports) {
-module.exports = "#define GLSLIFY 1\nuniform sampler2D utexture;\nvarying vec3 vColor;\nvarying vec2 vUv;\n\nvoid main() {\n  gl_FragColor = texture2D(utexture, vUv);\n}\n";
+module.exports = "#define GLSLIFY 1\nuniform sampler2D uTexture;\nvarying vec3 vColor;\nvarying vec2 vUv;\n\nvoid main() {\n  gl_FragColor = texture2D(uTexture, vUv);\n}\n";
 },{}],"sharders/vertex.glsl":[function(require,module,exports) {
-module.exports = "#define GLSLIFY 1\nvarying vec2 vUv;\n\nvoid main() {\n  vUv = uv;\n\n  vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);\n\n  gl_PointSize = 2.0 * ( 300.0 / -mvPosition.z );\n  gl_Position = projectionMatrix * mvPosition;\n}\n";
+module.exports = "#define GLSLIFY 1\nuniform vec2 uMouse;\nvarying vec2 vUv;\n\nvoid main() {\n  vUv = uv;\n\n  vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);\n\n  gl_PointSize = 2.0 * ( 300.0 / -mvPosition.z );\n  vec2 dv = gl_Position.xy - gl_Position.xy;\n\n  float dist = 100. - max(100. ,100.);\n\n  gl_Position = projectionMatrix * mvPosition;\n  gl_Position.xy -= 100. * dist * 100.;\n}\n";
 },{}],"../node_modules/parcel-bundler/src/builtins/bundle-url.js":[function(require,module,exports) {
 var bundleURL = null;
 
@@ -38058,19 +38058,24 @@ function init() {
   };
 }
 
+var uniforms = {
+  time: {
+    value: 0
+  },
+  resolution: {
+    value: new THREE.Vector4()
+  },
+  uTexture: {
+    value: new THREE.TextureLoader().load(star_wars_jpeg_1.default)
+  },
+  uMouse: {
+    value: new THREE.Vector2()
+  }
+};
+
 function createParticle() {
   var material = new THREE.ShaderMaterial({
-    uniforms: {
-      time: {
-        value: 0
-      },
-      resolution: {
-        value: new THREE.Vector4()
-      },
-      utexture: {
-        value: new THREE.TextureLoader().load(star_wars_jpeg_1.default)
-      }
-    },
+    uniforms: uniforms,
     side: THREE.DoubleSide,
     fragmentShader: fragment_glsl_1.default,
     vertexShader: vertex_glsl_1.default
@@ -38094,6 +38099,10 @@ function animate() {
   renderer.render(scene, camera);
 }
 
+window.addEventListener("mousemove", function (event) {
+  uniforms.uMouse.value.x = event.clientX / window.innerWidth * 2 - 1;
+  uniforms.uMouse.value.y = -(event.clientY / window.innerHeight) * 2 + 1;
+}, false);
 scene.add(particle);
 (_a = document.getElementById('root')) === null || _a === void 0 ? void 0 : _a.appendChild(renderer.domElement);
 animate();
@@ -38125,7 +38134,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52935" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55772" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

@@ -28,13 +28,16 @@ function init() {
   return { camera , scene, renderer, stats }
 }
 
+const uniforms = {
+  time: {  value: 0 },
+  resolution: { value: new THREE.Vector4() },
+  uTexture: { value: new THREE.TextureLoader().load(patten)},
+  uMouse: { value: new THREE.Vector2() },
+}
+
 function createParticle() {
   const material = new THREE.ShaderMaterial({
-    uniforms: {
-      time: {  value: 0 },
-      resolution: { value: new THREE.Vector4() },
-      utexture: { value: new THREE.TextureLoader().load(patten)},
-    },
+    uniforms,
     side: THREE.DoubleSide,
     fragmentShader: fragment,
     vertexShader: vertex
@@ -53,6 +56,11 @@ function animate() {
   stats.update()
   renderer.render(scene, camera)
 }
+
+window.addEventListener("mousemove", function(event) {
+  uniforms.uMouse.value.x = (event.clientX / window.innerWidth) * 2 - 1;
+  uniforms.uMouse.value.y = -(event.clientY / window.innerHeight) * 2 + 1;
+}, false)
 
 scene.add(particle)
 document.getElementById('root')?.appendChild(renderer.domElement)
