@@ -9,6 +9,7 @@ class Particle {
   #velocity: number
   #pointer: MouseProp
   #maxDistanceToMove = 100
+  #canvas: HTMLCanvasElement
 
   constructor(
     x: number,
@@ -17,16 +18,18 @@ class Particle {
     color: string,
     ctx: CanvasRenderingContext2D,
     pointer: MouseProp,
+    canvas: HTMLCanvasElement,
   ) {
-    this.#x = x
-    this.#y = y
+    this.#x =
+    this.#y =
     this.#size = size
     this.#color = color
     this.#ctx = ctx
     this.#originX = x
     this.#originY = y
-    this.#velocity = (Math.random() * 10) + 2 // 2-10
+    this.#velocity = (Math.random() * 50) + 2 // 2-10
     this.#pointer = pointer
+    this.#canvas = canvas
   }
 
   set pointer(pointer: MouseProp) {
@@ -38,11 +41,12 @@ class Particle {
     this.#ctx.arc(this.#x, this.#y, this.#size, 0, Math.PI * 2)
     this.#ctx.closePath()
     this.#ctx.fill()
+    this.#ctx.fillStyle = this.#color
   }
 
   update() {
-    this.#ctx.fillStyle = this.#color
     this.moveWithForce()
+    this.draw()
   }
 
   dx() {
@@ -92,7 +96,6 @@ class Particle {
         this.#y -= (this.#y - this.#originY) / 20
       }
     }
-    this.draw()
   }
 }
 
