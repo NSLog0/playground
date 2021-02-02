@@ -13,7 +13,7 @@ const stats = new Stats()
 const mouse: MouseProp = {
   x: null,
   y: null,
-  r: 100
+  r: 50
 }
 
 let particles: Array<Particle> = []
@@ -41,8 +41,8 @@ function createParticle(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D
         const r = imageData.data[getPixel(x, y, imageData.width, 0)]
         const g = imageData.data[getPixel(x, y, imageData.width, 1)]
         const b = imageData.data[getPixel(x, y, imageData.width, 2)]
-
-        item.push(new Particle(posX, posY, 1, `rgb(${r}, ${g}, ${b})`, ctx, mouse, canvas))
+        
+        item.push(new Particle(posX, posY, 1, `rgb(${r}, ${g}, ${b})`, ctx, mouse))
       }
     }
   }
