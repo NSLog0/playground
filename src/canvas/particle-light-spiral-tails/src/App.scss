@@ -1,0 +1,29 @@
+body {
+  margin: 0;
+  padding: 0;
+  background: black;
+}
+
+.Btn {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+
+  &--start {
+    width: 150px;
+    height: 50px;
+    border-radius: 10px;
+    border: none;
+    background: #286bf4;
+    color: #fff;
+
+    &:focus {
+      outline: none;
+      border: none;
+    }
+
+    &:active {
+      background: #4474d5;
+    }
+  }
+}
