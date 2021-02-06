@@ -1,9 +1,11 @@
 'use strict'
+import * as dat from 'dat.gui';
 
 import imageLoader from './components/imagesLoader';
 import './App.scss'
 import Particle from './components/Particle';
 
+const gui = new dat.GUI();
 const image = new Image()
 const canvas: HTMLCanvasElement = document.getElementById("ctx") as HTMLCanvasElement;
 const ctx: CanvasRenderingContext2D = canvas.getContext("2d") as CanvasRenderingContext2D;
@@ -47,8 +49,10 @@ function createParticle(canvas: HTMLCanvasElement, mouse: MouseProp, imageData: 
   return item
 }
 
+let frame = null
+
 function animate () {
-  requestAnimationFrame(animate)
+  frame = requestAnimationFrame(animate)
   ctx.fillStyle = 'rgba(0, 0, 0, 0.3)'
   ctx.fillRect(0,0, canvas.width, canvas.height)
 
@@ -102,21 +106,27 @@ window.addEventListener('mouseleave', onMouseLeave);
 window.addEventListener('touchend', onMouseLeave);
 window.addEventListener('touchcancel', onMouseLeave);
 
+const data = {
+  imageName: 'logo'
+}
 
-image.src = imageLoader('logos')
+function init() {
+  ctx.drawImage(image, 0, 0)
+  dataPixel = drawImage(ctx)
+  particles = []
+  particles = createParticle(canvas, mouse, dataPixel)
+
+  animate()
+}
+
+image.src = imageLoader(data.imageName)
+image.onload = init
 
 let dataPixel  = null
 
-window.addEventListener('load', () => {
-  ctx.drawImage(image, 0, 0)
-  dataPixel = drawImage(ctx)
-
-  particles = createParticle(canvas, mouse, dataPixel)
-  animate()
-})
-
-window.addEventListener('resize', () => {
-  particles = []
-  particles = createParticle(canvas, mouse, dataPixel)
+gui.add(data, 'imageName', [ 'logo', 'jedi' ]).onChange((value) => {
+  cancelAnimationFrame(frame)
+  ctx.clearRect(0, 0, canvas.width, canvas.height)
+  image.src = imageLoader(value)
 })
 
