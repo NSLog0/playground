@@ -20,7 +20,7 @@ class Particle implements IParticle {
     ctx.beginPath()
     ctx.arc(this.#x, this.#y, this.#size, 0, Math.PI * 2, false)
     ctx.shadowColor = this.#color
-    ctx.shadowBlur = 10
+    ctx.shadowBlur = 12
     ctx.fillStyle = this.#color
     ctx.fill()
     ctx.closePath()

@@ -176,7 +176,7 @@ var Particle = /*#__PURE__*/function () {
       ctx.beginPath();
       ctx.arc(__classPrivateFieldGet(this, _x), __classPrivateFieldGet(this, _y), __classPrivateFieldGet(this, _size), 0, Math.PI * 2, false);
       ctx.shadowColor = __classPrivateFieldGet(this, _color);
-      ctx.shadowBlur = 10;
+      ctx.shadowBlur = 12;
       ctx.fillStyle = __classPrivateFieldGet(this, _color);
       ctx.fill();
       ctx.closePath();
@@ -396,7 +396,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "65479" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51036" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
