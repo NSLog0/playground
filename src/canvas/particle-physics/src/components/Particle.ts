@@ -3,29 +3,25 @@ class Particle {
   #y: number
   #size: number
   #color: string
-  #ctx: CanvasRenderingContext2D
   #originX: number
   #originY: number
-  #velocity: number
   #pointer: MouseProp
-  #maxDistanceToMove = 100
-  
+  #maxDistanceToMove = 50
+  #density = (Math.random() * 10) + 300
+
   constructor(
     x: number,
     y: number,
     size: number,
     color: string,
-    ctx: CanvasRenderingContext2D,
     pointer: MouseProp,
   ) {
-    this.#x =
-    this.#y =
+    this.#x = x
+    this.#y = y
     this.#size = size
     this.#color = color
-    this.#ctx = ctx
     this.#originX = x
     this.#originY = y
-    this.#velocity = (Math.random() * 50) + 2 // 2-10
     this.#pointer = pointer
   }
 
@@ -33,66 +29,43 @@ class Particle {
     this.#pointer = pointer
   }
 
-  draw() {
-    this.#ctx.beginPath()
-    this.#ctx.arc(this.#x, this.#y, this.#size, 0, Math.PI * 2)
-    this.#ctx.closePath()
-    this.#ctx.fill()
-    this.#ctx.fillStyle = this.#color
+  draw(ctx) {
+    ctx.fillStyle = this.#color
+    ctx.beginPath()
+    ctx.arc(this.#x, this.#y, this.#size, 0, Math.PI * 2)
+    ctx.closePath()
+    ctx.fill()
   }
 
-  update() {
-    this.moveWithForce()
-    this.draw()
-  }
+  update(ctx) {
+    let dx = this.#pointer.x - this.#x;
+    let dy = this.#pointer.y - this.#y;
+    let distance = Math.sqrt(dx * dx + dy * dy);
+    let forceDirectionX = dx / distance;
+    let forceDirectionY = dy / distance;
+    let force = (this.#maxDistanceToMove - distance) / this.#maxDistanceToMove;
 
-  dx() {
-    return this.#pointer.x - this.#x
-  }
+    let directionX = forceDirectionX * force * this.#density;
+    let directionY = forceDirectionY * force * this.#density;
 
-  dy() {
-    return this.#pointer.y - this.#y
-  }
-
-  collision() {
-    const distance = Math.sqrt(this.dx() + this.dx() * this.dy() + this.dy())
-
-    return distance
-  }
-
-  force(distance: number) {
-
-    const velocityX = this.dx() / distance
-    const velocityY = this.dy() / distance
-
-    let movingForce = (this.#maxDistanceToMove - distance) / this.#maxDistanceToMove
-
-    if(movingForce < 0) {
-      movingForce = 0
+    if(distance < this.#pointer.r) {
+      this.#x -= directionX;
+      this.#y -= directionY;
     }
-
-    let moveX = (velocityX * movingForce * this.#velocity * 0.6)
-    let moveY = (velocityY * movingForce * this.#velocity * 0.6)
-
-    return { moveX, moveY }
-  }
-
-  moveWithForce() {
-    const distance = this.collision()
-    const { moveX, moveY } = this.force(distance)
-
-    if(distance < this.#pointer.r + this.#size) {
-      this.#x -= moveX
-      this.#y -= moveY
-    } else {
+    else {
       if(this.#x !== this.#originX) {
-        this.#x -= (this.#x - this.#originX) / 20
+        let dx = this.#x - this.#originX;
+        this.#x -= dx / 10;
       }
 
       if(this.#y !== this.#originY) {
-        this.#y -= (this.#y - this.#originY) / 20
+        let dy = this.#y - this.#originY;
+        this.#y -= dy / 10;
       }
     }
+
+
+    this.draw(ctx)
   }
 }
 

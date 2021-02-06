@@ -1,19 +1,16 @@
 'use strict'
 
 import imageLoader from './components/imagesLoader';
-import Stats from "stats.js";
-
 import './App.scss'
 import Particle from './components/Particle';
 
 const image = new Image()
 const canvas: HTMLCanvasElement = document.getElementById("ctx") as HTMLCanvasElement;
 const ctx: CanvasRenderingContext2D = canvas.getContext("2d") as CanvasRenderingContext2D;
-const stats = new Stats()
 const mouse: MouseProp = {
   x: null,
   y: null,
-  r: 50
+  r: 100
 }
 
 let particles: Array<Particle> = []
@@ -29,7 +26,7 @@ function positionXY(axis: number, wrapSize: number, imageSize: number) {
   return axis + wrapSize / offset - imageSize * offset
 }
 
-function createParticle(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, mouse: MouseProp, imageData: ImageData) {
+function createParticle(canvas: HTMLCanvasElement, mouse: MouseProp, imageData: ImageData) {
   const item: Array<Particle> = []
 
   for (let y = 0, y2 = imageData.height; y < y2; y++) {
@@ -41,8 +38,8 @@ function createParticle(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D
         const r = imageData.data[getPixel(x, y, imageData.width, 0)]
         const g = imageData.data[getPixel(x, y, imageData.width, 1)]
         const b = imageData.data[getPixel(x, y, imageData.width, 2)]
-        
-        item.push(new Particle(posX, posY, 1, `rgb(${r}, ${g}, ${b})`, ctx, mouse))
+
+        item.push(new Particle(posX, posY, 2, `rgb(${r}, ${g}, ${b})`, mouse))
       }
     }
   }
@@ -51,12 +48,12 @@ function createParticle(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D
 }
 
 function animate () {
-  ctx.fillStyle = 'rgb(0, 0, 0, 0.5)'
-  ctx.fillRect(0, 0, window.innerWidth, window.innerHeight)
   requestAnimationFrame(animate)
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.3)'
+  ctx.fillRect(0,0, canvas.width, canvas.height)
 
   for (let i = 0; i < particles.length; i++) {
-    particles[i].update()
+    particles[i].update(ctx)
   }
 }
 
@@ -70,24 +67,56 @@ function drawImage(ctx) {
 canvas.width = window.innerWidth
 canvas.height = window.innerHeight
 
-
-window.addEventListener('mousemove', (e) => {
-  mouse.x = e.x + canvas.clientLeft / 2
-  mouse.y = e.y + canvas.clientTop / 2
-
+function updatePointer() {
   for (let i = 0; i < particles.length; i++) {
     particles[i].pointer = mouse
   }
+}
+
+function onMouseMove(evt) {
+  const e = (evt.touches && evt.touches[0]) || evt;
+  mouse.x = e.clientX;
+  mouse.y = e.clientY;
+
+  updatePointer()
+}
+
+function onMouseLeave() {
+  mouse.x = null;
+  mouse.y = null;
+
+  updatePointer()
+}
+
+window.addEventListener('mousemove', (e) => {
+  onMouseMove(e)
 })
 
-image.src = imageLoader()
-document.body.appendChild(stats.dom)
+window.addEventListener('touchmove', (e) => {
+  e.preventDefault()
+  e.stopPropagation()
+  onMouseMove(e);
+}, {passive: false});
+
+window.addEventListener('mouseleave', onMouseLeave);
+window.addEventListener('touchend', onMouseLeave);
+window.addEventListener('touchcancel', onMouseLeave);
+
+
+image.src = imageLoader('logos')
+
+let dataPixel  = null
 
 window.addEventListener('load', () => {
   ctx.drawImage(image, 0, 0)
-  const dataPixel = drawImage(ctx)
+  dataPixel = drawImage(ctx)
 
-  particles = createParticle(canvas, ctx, mouse, dataPixel)
+  particles = createParticle(canvas, mouse, dataPixel)
   animate()
+})
+
+window.addEventListener('resize', () => {
+  particles = []
+  particles = createParticle(canvas, mouse, dataPixel)
 })
 
