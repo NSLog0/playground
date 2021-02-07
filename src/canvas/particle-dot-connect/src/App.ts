@@ -20,7 +20,7 @@ const mouse: MouseProp = {
 
 let particles: Array<Particle> = []
 
-var stats = new Stats()
+const stats = new Stats()
 document.body.appendChild(stats.dom)
 
 

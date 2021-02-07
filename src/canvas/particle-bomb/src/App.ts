@@ -1,9 +1,11 @@
+import Stats from "stats.js";
+
 import Particle from "./components/Particle";
 import './App.scss'
 
 const canvas: HTMLCanvasElement = document.getElementById("ctx") as HTMLCanvasElement;
 const ctx: CanvasRenderingContext2D = canvas.getContext("2d") as CanvasRenderingContext2D;
-const maxParticle = 180
+const maxParticle = 100
 
 let particles: Array<Particle> = []
 
@@ -17,6 +19,9 @@ window.addEventListener('resize', () => {
   particles = init(canvas)
 })
 
+const stats = new Stats()
+document.body.appendChild(stats.dom)
+
 function init(canvas: HTMLCanvasElement) {
   const item = []
 
@@ -24,32 +29,35 @@ function init(canvas: HTMLCanvasElement) {
     item.push(new Particle(
       canvas.width * Math.random(),
       canvas.height * Math.random(),
-      i * 3,
-      '255, 107, 107'
+      i
     ))
   }
 
   return item
 }
 
-setInterval(() => {
+const timer = setInterval(() => {
   if(particles.length < maxParticle) {
     particles.push(new Particle(
       canvas.width * Math.random(),
       canvas.height * Math.random(),
-      particles.length * 2,
-      '255, 107, 107'
+      particles.length,
     ))
   }
-}, 160)
+}, 200)
 
 function animate() {
+  stats.begin()
   ctx.clearRect(0, 0, window.innerWidth, window.innerHeight)
   requestAnimationFrame(animate)
+  if(particles.length === maxParticle) {
+    clearInterval(timer)
+  }
 
   for (let i = 0; i < particles.length; i++) {
     particles[i].update(ctx, window.innerWidth, window.innerHeight)
   }
+  stats.end()
 }
 
 particles = init(canvas)

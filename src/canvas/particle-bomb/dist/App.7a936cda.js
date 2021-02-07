@@ -117,7 +117,15 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 
   return newRequire;
-})({"components/Particle.ts":[function(require,module,exports) {
+})({"../node_modules/stats.js/build/stats.min.js":[function(require,module,exports) {
+var define;
+// stats.js - http://github.com/mrdoob/stats.js
+(function(f,e){"object"===typeof exports&&"undefined"!==typeof module?module.exports=e():"function"===typeof define&&define.amd?define(e):f.Stats=e()})(this,function(){var f=function(){function e(a){c.appendChild(a.dom);return a}function u(a){for(var d=0;d<c.children.length;d++)c.children[d].style.display=d===a?"block":"none";l=a}var l=0,c=document.createElement("div");c.style.cssText="position:fixed;top:0;left:0;cursor:pointer;opacity:0.9;z-index:10000";c.addEventListener("click",function(a){a.preventDefault();
+u(++l%c.children.length)},!1);var k=(performance||Date).now(),g=k,a=0,r=e(new f.Panel("FPS","#0ff","#002")),h=e(new f.Panel("MS","#0f0","#020"));if(self.performance&&self.performance.memory)var t=e(new f.Panel("MB","#f08","#201"));u(0);return{REVISION:16,dom:c,addPanel:e,showPanel:u,begin:function(){k=(performance||Date).now()},end:function(){a++;var c=(performance||Date).now();h.update(c-k,200);if(c>g+1E3&&(r.update(1E3*a/(c-g),100),g=c,a=0,t)){var d=performance.memory;t.update(d.usedJSHeapSize/
+1048576,d.jsHeapSizeLimit/1048576)}return c},update:function(){k=this.end()},domElement:c,setMode:u}};f.Panel=function(e,f,l){var c=Infinity,k=0,g=Math.round,a=g(window.devicePixelRatio||1),r=80*a,h=48*a,t=3*a,v=2*a,d=3*a,m=15*a,n=74*a,p=30*a,q=document.createElement("canvas");q.width=r;q.height=h;q.style.cssText="width:80px;height:48px";var b=q.getContext("2d");b.font="bold "+9*a+"px Helvetica,Arial,sans-serif";b.textBaseline="top";b.fillStyle=l;b.fillRect(0,0,r,h);b.fillStyle=f;b.fillText(e,t,v);
+b.fillRect(d,m,n,p);b.fillStyle=l;b.globalAlpha=.9;b.fillRect(d,m,n,p);return{dom:q,update:function(h,w){c=Math.min(c,h);k=Math.max(k,h);b.fillStyle=l;b.globalAlpha=1;b.fillRect(0,0,r,m);b.fillStyle=f;b.fillText(g(h)+" "+e+" ("+g(c)+"-"+g(k)+")",t,v);b.drawImage(q,d+a,m,n-a,p,d,m,n-a,p);b.fillRect(d+n-a,m,a,p);b.fillStyle=l;b.globalAlpha=.9;b.fillRect(d+n-a,m,a,g((1-h/w)*p))}}};return f});
+
+},{}],"components/Particle.ts":[function(require,module,exports) {
 "use strict";
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -143,14 +151,14 @@ var __classPrivateFieldGet = this && this.__classPrivateFieldGet || function (re
   return privateMap.get(receiver);
 };
 
-var _x_1, _y_1, _size, _color, _life, _originLife, _globalAlpha;
+var _x_1, _y_1, _size, _originSize, _life, _originLife, _globalAlpha, _color, _sizeOffset;
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
 var Particle = /*#__PURE__*/function () {
-  function Particle(x, y, size, color) {
+  function Particle(x, y, size) {
     _classCallCheck(this, Particle);
 
     _x_1.set(this, void 0);
@@ -159,7 +167,7 @@ var Particle = /*#__PURE__*/function () {
 
     _size.set(this, void 0);
 
-    _color.set(this, void 0);
+    _originSize.set(this, void 0);
 
     _life.set(this, void 0);
 
@@ -167,13 +175,17 @@ var Particle = /*#__PURE__*/function () {
 
     _globalAlpha.set(this, Math.random() * Math.random() * Math.random());
 
+    _color.set(this, '255, 107, 107');
+
+    _sizeOffset.set(this, 4);
+
     __classPrivateFieldSet(this, _x_1, x);
 
     __classPrivateFieldSet(this, _y_1, y);
 
-    __classPrivateFieldSet(this, _size, size);
+    __classPrivateFieldSet(this, _size, size * __classPrivateFieldGet(this, _sizeOffset));
 
-    __classPrivateFieldSet(this, _color, color);
+    __classPrivateFieldSet(this, _originSize, size);
 
     __classPrivateFieldSet(this, _life, Math.floor(Math.random() * 500 + 1));
 
@@ -183,8 +195,8 @@ var Particle = /*#__PURE__*/function () {
   _createClass(Particle, [{
     key: "draw",
     value: function draw(ctx) {
-      ctx.save(); // ctx.globalAlpha = this.#globalAlpha
-
+      ctx.save();
+      ctx.globalAlpha = __classPrivateFieldGet(this, _globalAlpha);
       ctx.globalCompositeOperation = 'lighter';
       ctx.beginPath();
       ctx.arc(__classPrivateFieldGet(this, _x_1), __classPrivateFieldGet(this, _y_1), __classPrivateFieldGet(this, _size), 0, Math.PI * 2, false);
@@ -194,34 +206,43 @@ var Particle = /*#__PURE__*/function () {
       ctx.restore();
     }
   }, {
-    key: "gradient",
-    value: function gradient(ctx) {
-      var radialContent = ctx.createRadialGradient(__classPrivateFieldGet(this, _x_1), __classPrivateFieldGet(this, _y_1), 0, __classPrivateFieldGet(this, _x_1), __classPrivateFieldGet(this, _y_1), __classPrivateFieldGet(this, _size));
-      radialContent.addColorStop(0, "rgba(".concat(__classPrivateFieldGet(this, _color), ", 1)"));
-      radialContent.addColorStop(0.1, "rgba(".concat(__classPrivateFieldGet(this, _color), ", 0.1)"));
-      radialContent.addColorStop(1, "rgba(".concat(__classPrivateFieldGet(this, _color), ", 0)"));
-      return radialContent;
-    }
-  }, {
-    key: "update",
-    value: function update(ctx, width, height) {
-      this.updateGloblaAlpha();
-      this.lifeUpdate();
-      this.move(width, height);
-
+    key: "reborn",
+    value: function reborn(width, height) {
       if (__classPrivateFieldGet(this, _life) < 0) {
         __classPrivateFieldSet(this, _x_1, Math.random() * width);
 
         __classPrivateFieldSet(this, _y_1, Math.random() * height);
 
-        __classPrivateFieldSet(this, _life, Math.floor(Math.random() * 500 + 1));
-      }
+        __classPrivateFieldSet(this, _size, __classPrivateFieldGet(this, _originSize) * __classPrivateFieldGet(this, _sizeOffset));
 
+        __classPrivateFieldSet(this, _globalAlpha, Math.random() * Math.random() * Math.random());
+
+        __classPrivateFieldSet(this, _life, Math.floor(Math.random() * 500 + 1));
+
+        __classPrivateFieldSet(this, _originLife, __classPrivateFieldGet(this, _life));
+      }
+    }
+  }, {
+    key: "update",
+    value: function update(ctx, width, height) {
+      this.lifeUpdate();
+      this.reborn(width, height);
+      this.alpha();
+      this.move(width, height);
       this.draw(ctx);
     }
   }, {
-    key: "updateGloblaAlpha",
-    value: function updateGloblaAlpha() {
+    key: "gradient",
+    value: function gradient(ctx) {
+      var radialContent = ctx.createRadialGradient(__classPrivateFieldGet(this, _x_1), __classPrivateFieldGet(this, _y_1), 0, __classPrivateFieldGet(this, _x_1), __classPrivateFieldGet(this, _y_1), __classPrivateFieldGet(this, _size));
+      radialContent.addColorStop(0, "rgba(".concat(__classPrivateFieldGet(this, _color), ", 1)"));
+      radialContent.addColorStop(0.2, "rgba(".concat(__classPrivateFieldGet(this, _color), ", 0.2)"));
+      radialContent.addColorStop(1, "rgba(".concat(__classPrivateFieldGet(this, _color), ", 0)"));
+      return radialContent;
+    }
+  }, {
+    key: "alpha",
+    value: function alpha() {
       var ratio = __classPrivateFieldGet(this, _life) / __classPrivateFieldGet(this, _originLife);
 
       __classPrivateFieldSet(this, _globalAlpha, __classPrivateFieldGet(this, _globalAlpha) * ratio * 1.3);
@@ -238,16 +259,16 @@ var Particle = /*#__PURE__*/function () {
 
       var _y = height / 2 - __classPrivateFieldGet(this, _y_1);
 
-      __classPrivateFieldSet(this, _x_1, __classPrivateFieldGet(this, _x_1) + _x / 25);
+      __classPrivateFieldSet(this, _x_1, __classPrivateFieldGet(this, _x_1) + _x / 20);
 
-      __classPrivateFieldSet(this, _y_1, __classPrivateFieldGet(this, _y_1) + _y / 25);
+      __classPrivateFieldSet(this, _y_1, __classPrivateFieldGet(this, _y_1) + _y / 20);
     }
   }]);
 
   return Particle;
 }();
 
-_x_1 = new WeakMap(), _y_1 = new WeakMap(), _size = new WeakMap(), _color = new WeakMap(), _life = new WeakMap(), _originLife = new WeakMap(), _globalAlpha = new WeakMap();
+_x_1 = new WeakMap(), _y_1 = new WeakMap(), _size = new WeakMap(), _originSize = new WeakMap(), _life = new WeakMap(), _originLife = new WeakMap(), _globalAlpha = new WeakMap(), _color = new WeakMap(), _sizeOffset = new WeakMap();
 exports.default = Particle;
 },{}],"../node_modules/parcel-bundler/src/builtins/bundle-url.js":[function(require,module,exports) {
 var bundleURL = null;
@@ -334,13 +355,15 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var stats_js_1 = __importDefault(require("stats.js"));
+
 var Particle_1 = __importDefault(require("./components/Particle"));
 
 require("./App.scss");
 
 var canvas = document.getElementById("ctx");
 var ctx = canvas.getContext("2d");
-var maxParticle = 180;
+var maxParticle = 100;
 var particles = [];
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
@@ -350,35 +373,44 @@ window.addEventListener('resize', function () {
   particles = [];
   particles = init(canvas);
 });
+var stats = new stats_js_1.default();
+document.body.appendChild(stats.dom);
 
 function init(canvas) {
   var item = [];
 
   for (var i = 0; i < 10; i++) {
-    item.push(new Particle_1.default(canvas.width * Math.random(), canvas.height * Math.random(), i * 3, '255, 107, 107'));
+    item.push(new Particle_1.default(canvas.width * Math.random(), canvas.height * Math.random(), i));
   }
 
   return item;
 }
 
-setInterval(function () {
+var timer = setInterval(function () {
   if (particles.length < maxParticle) {
-    particles.push(new Particle_1.default(canvas.width * Math.random(), canvas.height * Math.random(), particles.length * 2, '255, 107, 107'));
+    particles.push(new Particle_1.default(canvas.width * Math.random(), canvas.height * Math.random(), particles.length));
   }
-}, 160);
+}, 200);
 
 function animate() {
+  stats.begin();
   ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
   requestAnimationFrame(animate);
+
+  if (particles.length === maxParticle) {
+    clearInterval(timer);
+  }
 
   for (var i = 0; i < particles.length; i++) {
     particles[i].update(ctx, window.innerWidth, window.innerHeight);
   }
+
+  stats.end();
 }
 
 particles = init(canvas);
 animate();
-},{"./components/Particle":"components/Particle.ts","./App.scss":"App.scss"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"stats.js":"../node_modules/stats.js/build/stats.min.js","./components/Particle":"components/Particle.ts","./App.scss":"App.scss"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -406,7 +438,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53039" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58028" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
