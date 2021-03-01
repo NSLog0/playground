@@ -1,17 +1,17 @@
 uniform vec2 uMouse;
 varying vec2 vUv;
 
+attribute float aOffset;
+attribute float aSpeed;
+
 void main() {
   vUv = uv;
+  vec3 pos = position;
 
-  vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+  pos.z = position.z + aSpeed;
 
-  gl_PointSize = 2.0 * ( 300.0 / -mvPosition.z );
-  vec2 dv = gl_Position.xy - gl_Position.xy;
+  vec4 mvPosition = modelViewMatrix * vec4(pos, 1.);
 
-  float dist = 100. - max(100. ,100.);
-
-
+  gl_PointSize = 750. * ( 1. / -mvPosition.z );
   gl_Position = projectionMatrix * mvPosition;
-  gl_Position.xy -= 100. * dist * 100.;
 }

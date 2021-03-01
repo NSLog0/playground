@@ -9,9 +9,11 @@
   },
   "dependencies": {
     "@types/dat.gui": "^0.7.6",
+    "@types/ramda": "^0.27.38",
     "@types/stats": "^0.16.30",
     "components": "^0.1.0",
     "dat.gui": "^0.7.7",
+    "ramda": "^0.27.1",
     "sass": "^1.32.4",
     "stats.js": "^0.17.0"
   },

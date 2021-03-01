@@ -23,7 +23,6 @@ let particles: Array<Particle> = []
 const stats = new Stats()
 document.body.appendChild(stats.dom)
 
-
 canvas.width = window.innerWidth
 canvas.height = window.innerHeight
 

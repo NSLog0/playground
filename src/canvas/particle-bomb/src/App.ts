@@ -2,10 +2,22 @@ import Stats from "stats.js";
 
 import Particle from "./components/Particle";
 import './App.scss'
+import { add } from "ramda";
 
 const canvas: HTMLCanvasElement = document.getElementById("ctx") as HTMLCanvasElement;
 const ctx: CanvasRenderingContext2D = canvas.getContext("2d") as CanvasRenderingContext2D;
 const maxParticle = 100
+
+
+
+const result = add(1, 2)
+
+
+
+
+
+
+
 
 let particles: Array<Particle> = []
 
@@ -29,7 +41,7 @@ function init(canvas: HTMLCanvasElement) {
     item.push(new Particle(
       canvas.width * Math.random(),
       canvas.height * Math.random(),
-      i
+      i,
     ))
   }
 

@@ -37899,7 +37899,7 @@ exports.default = _default;
 },{}],"sharders/fragment.glsl":[function(require,module,exports) {
 module.exports = "#define GLSLIFY 1\nuniform sampler2D uTexture;\nvarying vec3 vColor;\nvarying vec2 vUv;\n\nvoid main() {\n  gl_FragColor = texture2D(uTexture, vUv);\n}\n";
 },{}],"sharders/vertex.glsl":[function(require,module,exports) {
-module.exports = "#define GLSLIFY 1\nuniform vec2 uMouse;\nvarying vec2 vUv;\n\nvoid main() {\n  vUv = uv;\n\n  vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);\n\n  gl_PointSize = 2.0 * ( 300.0 / -mvPosition.z );\n  vec2 dv = gl_Position.xy - gl_Position.xy;\n\n  float dist = 100. - max(100. ,100.);\n\n  gl_Position = projectionMatrix * mvPosition;\n  gl_Position.xy -= 100. * dist * 100.;\n}\n";
+module.exports = "#define GLSLIFY 1\nuniform vec2 uMouse;\nvarying vec2 vUv;\n\nattribute float aOffset;\nattribute float aSpeed;\n\nvoid main() {\n  vUv = uv;\n  vec3 pos = position;\n\n  pos.z = position.z + aSpeed;\n\n  vec4 mvPosition = modelViewMatrix * vec4(pos, 1.);\n\n  gl_PointSize = 750. * ( 1. / -mvPosition.z );\n  gl_Position = projectionMatrix * mvPosition;\n}\n";
 },{}],"../node_modules/parcel-bundler/src/builtins/bundle-url.js":[function(require,module,exports) {
 var bundleURL = null;
 
@@ -38039,14 +38039,14 @@ var star_wars_jpeg_1 = __importDefault(require("./images/star_wars.jpeg"));
 
 function init() {
   var scene = new THREE.Scene();
-  var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 2000);
+  var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 3000);
   var renderer = new THREE.WebGLRenderer({
     antialias: true
   });
   new OrbitControls_1.OrbitControls(camera, renderer.domElement);
   var stats = new stats_module_js_1.default();
   document.body.appendChild(stats.dom);
-  camera.position.z = 300;
+  camera.position.z = 200;
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.render(scene, camera);
@@ -38058,9 +38058,15 @@ function init() {
   };
 }
 
+var dimension = {
+  x: 400,
+  y: 711
+};
+var aOffset = new THREE.BufferAttribute(new Float32Array(400 * 711), 1);
+var aSpeed = new THREE.BufferAttribute(new Float32Array(400 * 711), 1);
 var uniforms = {
   time: {
-    value: 0
+    value: 0.0
   },
   resolution: {
     value: new THREE.Vector4()
@@ -38072,17 +38078,29 @@ var uniforms = {
     value: new THREE.Vector2()
   }
 };
+var geometry = new THREE.PlaneBufferGeometry(dimension.x * 0.56, dimension.y * 0.56, dimension.x, dimension.y);
+var material = new THREE.ShaderMaterial({
+  uniforms: uniforms,
+  side: THREE.DoubleSide,
+  fragmentShader: fragment_glsl_1.default,
+  vertexShader: vertex_glsl_1.default
+});
 
-function createParticle() {
-  var material = new THREE.ShaderMaterial({
-    uniforms: uniforms,
-    side: THREE.DoubleSide,
-    fragmentShader: fragment_glsl_1.default,
-    vertexShader: vertex_glsl_1.default
-  });
-  var geometry = new THREE.PlaneBufferGeometry(400 * 0.56, 711 * 0.56, 400, 711);
-  var points = new THREE.Points(geometry, material);
-  return points;
+function createParticle(geo, mat) {
+  return new THREE.Points(geo, mat);
+}
+
+function rand(a, b) {
+  return a + (b - a) * Math.random();
+}
+
+var idx = 0;
+
+for (var i = 0; i < dimension.x; i++) {
+  for (var _i = 0; _i < dimension.x; _i++) {
+    aSpeed.setX(idx, rand(0.4, 1.0));
+    idx++;
+  }
 }
 
 var _init = init(),
@@ -38091,12 +38109,14 @@ var _init = init(),
     renderer = _init.renderer,
     stats = _init.stats;
 
-var particle = createParticle();
+geometry.setAttribute('aSpeed', aSpeed);
+var particle = createParticle(geometry, material);
 
 function animate() {
+  stats.begin();
   requestAnimationFrame(animate);
-  stats.update();
   renderer.render(scene, camera);
+  stats.end();
 }
 
 window.addEventListener("mousemove", function (event) {
@@ -38134,7 +38154,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55772" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52149" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
